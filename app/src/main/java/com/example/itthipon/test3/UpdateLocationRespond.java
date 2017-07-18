@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
  * Created by Itthipon on 7/14/2017.
  */
 
-public class LoginRespone {
+public class UpdateLocationRespond {
 
     public boolean status;
     public JsonObject data;

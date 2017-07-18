@@ -82,7 +82,6 @@ public class APIClient {
                 }
             });
 
-
             OkHttpClient httpClient = builder.build();
 
 
