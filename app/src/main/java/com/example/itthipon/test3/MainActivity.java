@@ -9,9 +9,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
@@ -23,8 +23,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     APIInterface apiInterface;
     Switch switch_status;
-    Boolean switch_state;
+    Boolean switch_state = true;
+    int n = 0;
     private LocationManager locationManager;
+    TextView tv_id;
 
 //    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -51,14 +53,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         apiInterface = APIClient.getClient().create(APIInterface.class);
 
         switch_status = (Switch) findViewById(R.id.switch_status);
-        switch_status.setChecked(false);
-        switch_state = switch_status.isChecked();
+        tv_id = (TextView) findViewById(R.id.tv_id);
+        tv_id.setText(getID());
+
+        if(n==0){
+            switch_status.setChecked(switch_state);
+        }
+
+    }
+
+    public void onResume(){
+        super.onResume();
+        if(n!=0){
+            switch_status.setChecked(switch_state);
+        }
         switch_status.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 switch_state = switch_status.isChecked();
+                n++;
             }
         });
-
     }
 
     private void updateLocationToServer(Location location) {
@@ -89,13 +103,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         return (int) (horiAcc / 5);
     }
 
+    public String getID(){
+        String id = "99999";
+        return id;
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         if(switch_state == true){
-            Log.d("location",String.valueOf(location.getLatitude()));
             updateLocationToServer(location);
-        }else{
-            Log.d("switch_state",String.valueOf(switch_state));
         }
 
     }
