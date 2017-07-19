@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -26,10 +27,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     APIInterface apiInterface;
     Switch switch_status;
-    Boolean switch_status2 = false;
+    Boolean switch_status2;
     private LocationManager locationManager;
     TextView tv_id;
-    int count = 0;
+    static int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
         UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
         String deviceId = deviceUuid.toString();
+        if(count==0){
+            switch_status.setChecked(false);
+        }
+        count++;
+        Log.d("count === ",String.valueOf(count));
+    }
 
+    public void onResume(){
+        super.onResume();
+        count++;
+        Log.d("count2 ==== ",String.valueOf(count));
         switch_status.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 switch_status2 = switch_status.isChecked();
@@ -75,18 +86,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public void onStart(){
         super.onStart();
-        switch_status.setChecked(switch_status2);
         switch_status2 = switch_status.isChecked();
+        switch_status.setChecked(switch_status2);
 
-    }
-
-    public void onResume(){
-        super.onResume();
-//        switch_status.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                switch_status2 = switch_status.isChecked();
-//            }
-//        });
     }
 
     private void updateLocationToServer(Location location) {
